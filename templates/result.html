@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hasil Diagnosa Penyakit Diabetes</title>
+    <title>Hasil Prediksi</title>
     <style>
       body {
         font-family: "Arial", sans-serif;
@@ -80,9 +80,9 @@
       </div>
     {% endif %}
 
-    {% if result_path %}
+    {% if result_filename %}
       <p>
-        <a id="hasil" href="{{ url_for('download_file', filename='hasil prediksi.xlsx') }}">Download Hasil Prediksi</a>
+        <a id="hasil" href="{{ url_for('download_file', filename=result_filename) }}">Download Hasil Prediksi</a>
       </p>
     {% endif %}
 

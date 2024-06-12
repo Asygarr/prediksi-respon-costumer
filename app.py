@@ -4,6 +4,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 import uuid
+import os
 
 app = Flask(__name__)
 
@@ -48,8 +49,9 @@ def result():
     if file:
         # Membuat identifier unik acak
         unique_id = str(uuid.uuid4())
-        # Menggabungkan identifier unik dengan nama file yang diunggah
-        file_path = 'uploads/' + unique_id + '_' + file.filename
+        if not os.path.exists('uploads'):
+            os.makedirs('uploads')
+        file_path = os.path.join('uploads', unique_id + '_' + file.filename)
         file.save(file_path)
 
         # Membaca data dari file yang sudah diunggah
@@ -68,19 +70,22 @@ def result():
 
         # Membuat file hasil prediksi
         result_unique_id = str(uuid.uuid4())
-        result_path = 'result/' + result_unique_id + '_hasil_prediksi.xlsx'
+        if not os.path.exists('result'):
+            os.makedirs('result')
+        result_filename = result_unique_id + '_hasil_prediksi.xlsx'
+        result_path = os.path.join('result', result_filename)
         result_df.to_excel(result_path, index=False)
 
         # Membaca file hasil prediksi dan mengonversinya ke HTML
         result_html = result_df.to_html(classes='table table-striped', index=False)
 
         # Mengembalikan halaman hasil dengan tabel HTML dan link untuk mengunduh hasil prediksi
-        return render_template('result.html', result_html=result_html, result_path=result_path)
+        return render_template('result.html', result_html=result_html, result_filename=result_filename)
 
 # Mengunduh file hasil prediksi
 @app.route('/download/<filename>')
 def download_file(filename):
-    return send_file('result/' + filename, as_attachment=True)
+    return send_file(os.path.join('result', filename), as_attachment=True)
 
 if __name__ == '__main__':
     app.run(debug=True)
